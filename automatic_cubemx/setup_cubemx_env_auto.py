@@ -10,7 +10,7 @@
 # own board definition to glean the cpu type.
 
 import shutil
-from os import mkdir, makedirs, path, rename, symlink, walk, listdir, unlink
+from os import mkdir, makedirs, path, rename, walk, listdir, unlink
 import SCons.Errors
 import xml.etree.ElementTree as ET
 import re
@@ -124,19 +124,19 @@ for linked_resource in project_root.findall(".//linkedResources/link"):
         else:
             link_name = path.join(linked_resources_dir, resource_name)
 
-        # if symlink already created previously, 
+        # if file already copied previously,
         # remove entry from dictionary
         if resource_name in linked_resource_dict:
             del linked_resource_dict[resource_name]
         else:
-            # create symlink
+            # copy resource
             # print(link_name)
-            symlink(resource, link_name)
+            shutil.copy2(resource, link_name)
     except OSError:
         if "Third_Party" not in resource:
             # print(resource)
             raise SCons.Errors.BuildError(
-                errstr="%s Error: Cannot create symlink in directory '%s'"
+                errstr="%s Error: Cannot create copy in directory '%s'"
                 % (log_name, linked_resources_dir))
 
 # Remove previously linked resources that have disappeared
